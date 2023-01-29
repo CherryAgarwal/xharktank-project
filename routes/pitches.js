@@ -9,7 +9,7 @@ app.use(express.json())
 
 
 // Get all pitches along with their offers in reverse chronological order
-router.get('/',VerifyToken, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const pitches = await Pitch.find().sort({
       $natural: -1
@@ -21,7 +21,7 @@ router.get('/',VerifyToken, async (req, res) => {
 })
 
 //Get a single pitch according to provided id
-router.get('/:pitch_id',VerifyToken, async (req, res) => {
+router.get('/:pitch_id', async (req, res) => {
   try {
     const pitch = await Pitch.findById(req.params.pitch_id)
     res.status(200).json(pitch)
@@ -32,7 +32,7 @@ router.get('/:pitch_id',VerifyToken, async (req, res) => {
 })
 
 //post a pitch and returning id in response
-router.post('/',VerifyToken, async (req, res) => {
+router.post('/', async (req, res) => {
   const pitch = new Pitch({
     entrepreneur: req.body.entrepreneur,
     pitchTitle: req.body.pitchTitle,
