@@ -13,7 +13,8 @@ con.on('open', () => {
 
 app.use(express.json())
 
-
+const pitchRouter = require('./routes/pitches')
+app.use('/pitches',pitchRouter)
 
 app.listen(8081, () => {
     console.log('Server started')
