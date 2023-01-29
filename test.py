@@ -90,7 +90,7 @@ class XharkTankAssessment(TestCase):
         """Verify if backend is running at port 8081"""
         status = self.check_server("localhost",8081)
         self.assertTrue(status)
-        
+
     @pytest.mark.order(1)
     def test_1_get_all_pitches_when_empty_db(self):
         """Get All Pitches and Verify that response is an empty list and HTTP Status is OK"""
@@ -171,4 +171,43 @@ class XharkTankAssessment(TestCase):
         self.assertIn(response.status_code, self.POSITIVE_STATUS_CODES)
         response_length = len(self.decode_and_load_json(response))
         self.assertEqual(response_length, 3)
+        
+    @pytest.mark.order(5)
+    def test_5_post_offer(self):
+        """Post a new Offer provided pitch Id and Verify that response is as per the API Spec and HTTP Status is Created"""
+        endpoint = 'pitches'
+        body = {
+            "entrepreneur": "Yakshit#4",
+            "pitchTitle": "Sample Title #4",
+            "pitchIdea" : "Sample Idea #4",
+            "askAmount" : 1000000000,
+            "equity": 25.3
+        }
+    
+        response = self.post_api(endpoint, json.dumps(body))
+        self.assertIn(response.status_code, self.POSITIVE_STATUS_CODES)
+        data = self.decode_and_load_json(response)
+        self.assertTrue(self.checkKey(data,"id"))
+        self.assertEqual(1,len(data))
+        endpoint = 'pitches/{}/makeOffer'.format(data["id"])
+        body = {
+            "investor": "Anupam Mittal",
+            "amount" : 1000000000,
+            "equity": 25.3,
+            "comment":"A new concept in the ed-tech market. I can relate with the importance of the Learn By Doing philosophy. Keep up the Good Work! Definitely interested to work with you to scale the vision of the company!"
+        }
+        response = self.post_api(endpoint, json.dumps(body))
+        self.assertIn(response.status_code, self.POSITIVE_STATUS_CODES)
+        data = self.decode_and_load_json(response)
+        self.assertTrue(self.checkKey(data,"id"))
+        self.assertEqual(1,len(data))
+    
+    @pytest.mark.order(6)
+    def test_6_post_pitch_empty_body(self):
+            """Post a new Pitch and Verify that response is HTTP Status Bad Request #1"""
+            endpoint = 'pitches'
+            body = {}
+            response = self.post_api(endpoint, json.dumps(body))
+            self.assertIn(response.status_code, self.NEGATIVE_STATUS_CODES)
+
     
