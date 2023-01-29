@@ -16,6 +16,9 @@ app.use(express.json())
 const pitchRouter = require('./routes/pitches')
 app.use('/pitches',pitchRouter)
 
+const authRouter = require('./routes/auth')
+app.use('/auth',authRouter)
+
 app.listen(8081, () => {
     console.log('Server started')
 })
