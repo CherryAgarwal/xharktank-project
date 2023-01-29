@@ -90,3 +90,85 @@ class XharkTankAssessment(TestCase):
         """Verify if backend is running at port 8081"""
         status = self.check_server("localhost",8081)
         self.assertTrue(status)
+        
+    @pytest.mark.order(1)
+    def test_1_get_all_pitches_when_empty_db(self):
+        """Get All Pitches and Verify that response is an empty list and HTTP Status is OK"""
+        endpoint = 'pitches'
+        response = self.get_api(endpoint)
+        self.assertEqual(response.status_code, 200)
+        response_length = len(self.decode_and_load_json(response))
+        self.assertEqual(0,response_length)
+    
+    @pytest.mark.order(2)
+    def test_2_post_pitch(self):
+        """Post a new Pitch and Verify that response is as per the API Spec and HTTP Status is Created """
+        endpoint = 'pitches'
+        body = {
+            "entrepreneur": "Yakshit#1",
+            "pitchTitle": "Sample Title #1",
+            "pitchIdea" : "Sample Idea #1",
+            "askAmount" : 1000000000,
+            "equity": 25.3
+        }
+        response = self.post_api(endpoint, json.dumps(body))
+        # print(response.status_code)
+        self.assertIn(response.status_code, self.POSITIVE_STATUS_CODES)
+        data = self.decode_and_load_json(response)
+        # print(data)
+        self.assertTrue(self.checkKey(data,"id"))
+        self.assertEqual(1,len(data))
+    
+    
+    @pytest.mark.order(3)
+    def test_3_get_single_pitch(self):
+        """Get a single Pitch provided id and Verify that response is as per the API Spec and HTTP Status is OK"""
+        endpoint = 'pitches'
+        body = {
+            "entrepreneur": "Yakshit#2",
+            "pitchTitle": "Sample Title #2",
+            "pitchIdea" : "Sample Idea #2",
+            "askAmount" : 1000000000,
+            "equity": 25.3
+        }
+    
+        response = self.post_api(endpoint, json.dumps(body))
+        self.assertIn(response.status_code, self.POSITIVE_STATUS_CODES)
+        data = self.decode_and_load_json(response)
+        self.assertTrue(self.checkKey(data,"id"))
+        self.assertEqual(1,len(data))
+        endpoint = 'pitches/{}'.format(data["id"])
+        response = self.get_api(endpoint)
+        self.assertIn(response.status_code, self.POSITIVE_STATUS_CODES)
+        data = self.decode_and_load_json(response)
+        self.assertTrue(self.checkKey(data,"id"))
+        self.assertTrue(self.checkKey(data,"entrepreneur"))
+        self.assertTrue(self.checkKey(data,"pitchIdea"))
+        self.assertTrue(self.checkKey(data,"pitchTitle"))
+        self.assertTrue(self.checkKey(data,"askAmount"))
+        self.assertTrue(self.checkKey(data,"equity"))
+        self.assertTrue(self.checkKey(data,"offers"))
+        body["id"] = data["id"]
+        body["offers"] = []
+        self.assertDictEqual(body,data)
+        self.assertEqual(7,len(data))
+    
+    
+    @pytest.mark.order(4)
+    def test_4_get_all_pitches_when_pitches_present_in_db(self):
+        """Get all Pitches and Verify that response is as per the API Spec and HTTP Status is OK"""
+        endpoint = 'pitches'
+        body = {
+            "entrepreneur": "Yakshit#3",
+            "pitchTitle": "Sample Title #3",
+            "pitchIdea" : "Sample Idea #3",
+            "askAmount" : 1000000000,
+            "equity": 25.3
+        }
+        response = self.post_api(endpoint, json.dumps(body))
+        self.assertIn(response.status_code, self.POSITIVE_STATUS_CODES)
+        response = self.get_api(endpoint)
+        self.assertIn(response.status_code, self.POSITIVE_STATUS_CODES)
+        response_length = len(self.decode_and_load_json(response))
+        self.assertEqual(response_length, 3)
+    
