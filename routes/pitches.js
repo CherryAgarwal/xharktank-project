@@ -50,7 +50,7 @@ router.post('/', async (req, res) => {
 })
 
 //post an offer provided id of the pitch
-router.post('/:id/makeOffer',VerifyToken, async (req, res) => {
+router.post('/:id/makeOffer', async (req, res) => {
   const pitchId = req.params.id;
   const new_offer = {
     investor: req.body.investor,
