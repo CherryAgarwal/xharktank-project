@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const bodyParser = require('body-parser');
 const Pitch = require('../models/pitch')
-var VerifyToken = require('./VerifyToken');
 const app = express()
 app.use(bodyParser.json());
 app.use(express.json())
