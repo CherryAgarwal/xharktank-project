@@ -11,7 +11,7 @@ pipeline {
 		}
 		stage("Test"){
 			steps{
-				sh "pip install -r requirement.txt"
+				sh "pip install -r requirements.txt"
 				sh "python test.py"
 			}
 		}
