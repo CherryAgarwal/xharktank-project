@@ -210,4 +210,5 @@ class XharkTankAssessment(TestCase):
             response = self.post_api(endpoint, json.dumps(body))
             self.assertIn(response.status_code, self.NEGATIVE_STATUS_CODES)
 
-    
+if __name__ == '__main__':
+    unittest.main()
